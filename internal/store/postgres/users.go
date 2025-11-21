@@ -3,6 +3,8 @@ package postgres
 import (
 	"context"
 	"database/sql"
+
+	"github.com/Replais/replais-api/internal/model"
 )
 
 // UsersStore implements the store.Users interface for Postgres
@@ -16,7 +18,15 @@ func NewUsersStore(db *sql.DB) *UsersStore {
 }
 
 // Create implements the store.Users interface
-func (s *UsersStore) Create(ctx context.Context) error {
-	// TODO: Implement actual database logic
+func (s *UsersStore) Create(ctx context.Context, user *model.User) error {
+	query := `
+		INSERT INTO users (id, email, name)
+		VALUES ($1, $2, $3)
+		RETURNING id, created_at, updated_at
+	`
+	err := s.db.QueryRowContext(ctx, query, user.ID, user.Email, user.Name).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return err
+	}
 	return nil
 }
