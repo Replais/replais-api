@@ -1,20 +1,24 @@
 package store
 
-import "context"
+import (
+	"context"
+
+	"github.com/Replais/replais-api/internal/model"
+)
 
 // Users defines the interface for user repository operations
 type Users interface {
-	Create(ctx context.Context) error
+	Create(ctx context.Context, user *model.User) error
 }
 
 // Contacts defines the interface for contact repository operations
 type Contacts interface {
-	Create(ctx context.Context) error
+	Create(ctx context.Context, contact *model.Contact) error
 }
 
 // Storage is the main storage interface that aggregates all repository interfaces
 // Different implementations (Postgres, Mongo, etc.) will implement this
-type Storage struct {
-	Users
-	Contacts
+type Storage interface {
+	Users() Users
+	Contacts() Contacts
 }

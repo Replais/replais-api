@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Replais/replais-api/internal/store"
+	"github.com/Replais/replais-api/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -16,7 +16,7 @@ type config struct {
 
 type application struct {
 	config
-	store store.Storage
+	services service.Services
 }
 
 func (app *application) mount() http.Handler {
