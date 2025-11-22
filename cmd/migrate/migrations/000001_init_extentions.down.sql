@@ -1,0 +1,3 @@
+-- Optional: usually you DON'T drop extensions in down
+-- DROP EXTENSION IF EXISTS pgcrypto;
+-- DROP EXTENSION IF EXISTS citext;
