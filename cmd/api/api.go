@@ -1,38 +1,28 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"time"
 
+	"github.com/Replais/replais-api/internal/config"
+	"github.com/Replais/replais-api/internal/logger"
 	"github.com/Replais/replais-api/internal/service"
 )
 
-type config struct {
-	addr     string
-	dbConfig dbConfig
-}
-
-type dbConfig struct {
-	addr         string
-	maxOpenConns int
-	maxIdleConns int
-	maxIdleTime  time.Duration
-}
-
 type application struct {
-	config
+	config   config.Config
+	logger   logger.Logger
 	services service.Services
 }
 
 func (a *application) run(h http.Handler) error {
 	srv := http.Server{
-		Addr:         a.config.addr,
+		Addr:         a.config.Addr,
 		Handler:      h,
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 10,
 		IdleTimeout:  time.Minute,
 	}
-	log.Printf("Server has started at %s", a.config.addr)
+	a.logger.Info("Server has started at %s", a.config.Addr)
 	return srv.ListenAndServe()
 }

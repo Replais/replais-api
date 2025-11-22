@@ -1,18 +1,30 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/Replais/replais-api/internal/config"
+	"github.com/Replais/replais-api/internal/logger"
 )
 
-type HealthController struct{}
+type HealthController struct {
+	logger logger.Logger
+	config config.Config
+}
 
-func NewHealthController() *HealthController {
-	return &HealthController{}
+func NewHealthController(log logger.Logger, cfg config.Config) *HealthController {
+	return &HealthController{
+		logger: log,
+		config: cfg,
+	}
 }
 
 func (c *HealthController) Health(w http.ResponseWriter, r *http.Request) {
-	resp := map[string]string{"status": "ok"}
-	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	c.logger.Debug("Health check requested")
+	data := map[string]string{
+		"status": "ok",
+	}
+	if err := jsonResponse(w, http.StatusOK, data); err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+	}
 }

@@ -2,20 +2,25 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/Replais/replais-api/internal/config"
+	"github.com/Replais/replais-api/internal/logger"
 	"github.com/Replais/replais-api/internal/model"
 	"github.com/Replais/replais-api/internal/service"
 )
 
 type ContactsController struct {
 	contacts service.ContactsService
+	logger   logger.Logger
+	config   config.Config
 }
 
-func NewContactsController(s service.ContactsService) *ContactsController {
+func NewContactsController(s service.ContactsService, log logger.Logger, cfg config.Config) *ContactsController {
 	return &ContactsController{
 		contacts: s,
+		logger:   log,
+		config:   cfg,
 	}
 }
 
@@ -31,8 +36,8 @@ type createContactRequest struct {
 func (c *ContactsController) Create(w http.ResponseWriter, r *http.Request) {
 	var req createContactRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+	if err := readJSON(w, r, &req); err != nil {
+		badRequestError(c.logger, w, r, err)
 		return
 	}
 
@@ -45,11 +50,14 @@ func (c *ContactsController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.contacts.Create(r.Context(), contact); err != nil {
-		http.Error(w, "failed to create contact", http.StatusInternalServerError)
+		internalServerError(c.logger, w, r, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(contact)
+	err := jsonResponse(w, http.StatusCreated, contact)
+	if err != nil {
+		internalServerError(c.logger, w, r, err)
+		return
+	}
+
 }
