@@ -49,7 +49,6 @@ type ContactSetting struct {
 	UserID       string         `json:"user_id"`
 	ContactID    string         `json:"contact_id"`
 	PersonaID    string         `json:"persona_id"`
-	Tone         string         `json:"tone"`
 	Instructions string         `json:"instructions"`
 	Extra        map[string]any `json:"extra"`
 	CreatedAt    time.Time      `json:"created_at"`

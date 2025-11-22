@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS user_settings;
+DROP TABLE IF EXISTS personas;
+DROP TABLE IF EXISTS users;
