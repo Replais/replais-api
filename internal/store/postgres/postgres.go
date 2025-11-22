@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 
+	"github.com/Replais/replais-api/internal/logger"
 	"github.com/Replais/replais-api/internal/store"
 )
 
@@ -13,10 +14,11 @@ type PostgresStorage struct {
 }
 
 // NewStorage creates a new Postgres storage implementation
-func NewStorage(db *sql.DB) store.Storage {
+// Logger is passed here so stores can log database operations
+func NewStorage(db *sql.DB, log logger.Logger) store.Storage {
 	return &PostgresStorage{
-		users:    NewUsersStore(db),
-		contacts: NewContactsStore(db),
+		users:    NewUsersStore(db, log),
+		contacts: NewContactsStore(db, log),
 	}
 }
 

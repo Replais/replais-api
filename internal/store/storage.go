@@ -2,8 +2,16 @@ package store
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"github.com/Replais/replais-api/internal/model"
+)
+
+var (
+	ErrNotFound          = errors.New("resource not found")
+	ErrConflict          = errors.New("resource already exists")
+	QueryTimeoutDuration = time.Second * 5
 )
 
 // Users defines the interface for user repository operations

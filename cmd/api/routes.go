@@ -23,9 +23,10 @@ func (app *application) routes() http.Handler {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	// Instantiate controllers with DI
-	health := controllers.NewHealthController()
-	contacts := controllers.NewContactsController(app.services.Contacts)
-	users := controllers.NewUserController(app.services.Users)
+	// Controllers get logger (for request logging) and config (for server-specific needs)
+	health := controllers.NewHealthController(app.logger, app.config)
+	contacts := controllers.NewContactsController(app.services.Contacts, app.logger, app.config)
+	users := controllers.NewUserController(app.services.Users, app.logger, app.config)
 
 	// health
 	r.Get("/v1/health", health.Health)

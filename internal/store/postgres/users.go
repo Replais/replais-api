@@ -4,17 +4,22 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/Replais/replais-api/internal/logger"
 	"github.com/Replais/replais-api/internal/model"
 )
 
 // UsersStore implements the store.Users interface for Postgres
 type UsersStore struct {
-	db *sql.DB
+	db     *sql.DB
+	logger logger.Logger
 }
 
 // NewUsersStore creates a new UsersStore instance
-func NewUsersStore(db *sql.DB) *UsersStore {
-	return &UsersStore{db: db}
+func NewUsersStore(db *sql.DB, log logger.Logger) *UsersStore {
+	return &UsersStore{
+		db:     db,
+		logger: log,
+	}
 }
 
 // Create implements the store.Users interface
