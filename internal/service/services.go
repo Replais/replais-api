@@ -9,6 +9,7 @@ import (
 type Services struct {
 	Users    UsersService
 	Contacts ContactsService
+	Personas PersonasService
 }
 
 // NewServices wires all services with the underlying store implementation and logger.
@@ -18,5 +19,6 @@ func NewServices(st store.Storage, log logger.Logger) Services {
 	return Services{
 		Users:    NewUsersService(st.Users(), log),
 		Contacts: NewContactsService(st.Contacts(), log),
+		Personas: NewPersonasService(st.Personas(), log),
 	}
 }

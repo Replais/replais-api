@@ -27,7 +27,7 @@ func (app *application) routes() http.Handler {
 	health := controllers.NewHealthController(app.logger, app.config)
 	contacts := controllers.NewContactsController(app.services.Contacts, app.logger, app.config)
 	users := controllers.NewUserController(app.services.Users, app.logger, app.config)
-
+	personas := controllers.NewPersonasController(app.services.Personas, app.logger)
 	// health
 	r.Get("/v1/health", health.Health)
 	r.Route("/v1", func(r chi.Router) {
@@ -35,13 +35,21 @@ func (app *application) routes() http.Handler {
 		r.Route("/users", func(r chi.Router) {
 			r.Post("/", users.Create)
 			// r.Get("/{id}", app.getUserHandler)
-			// r.Put("/{id}", app.updateUserHandler)
 		})
 		// contacts
 		r.Route("/contacts", func(r chi.Router) {
 			r.Post("/", contacts.Create)
-			// r.Get("/", app.listContactsHandler)
-			// r.Get("/{id}", app.getContactHandler)
+		})
+		// personas
+		r.Route("/personas", func(r chi.Router) {
+			r.Post("/", personas.Create)
+			r.Get("/", personas.GetAll) // Public route: returns only slug and label
+		})
+		// admin/internal routes
+		r.Route("/admin", func(r chi.Router) {
+			r.Route("/personas", func(r chi.Router) {
+				r.Get("/", personas.GetAllAdmin) // Admin route: returns full persona details
+			})
 		})
 	})
 

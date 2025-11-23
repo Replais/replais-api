@@ -24,9 +24,15 @@ type Contacts interface {
 	Create(ctx context.Context, contact *model.Contact) error
 }
 
+type Personas interface {
+	Create(ctx context.Context, persona *model.Persona) error
+	GetAll(ctx context.Context) ([]model.Persona, error)
+}
+
 // Storage is the main storage interface that aggregates all repository interfaces
 // Different implementations (Postgres, Mongo, etc.) will implement this
 type Storage interface {
 	Users() Users
 	Contacts() Contacts
+	Personas() Personas
 }
