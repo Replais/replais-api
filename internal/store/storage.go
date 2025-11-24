@@ -22,11 +22,15 @@ type Users interface {
 // Contacts defines the interface for contact repository operations
 type Contacts interface {
 	Create(ctx context.Context, contact *model.Contact) error
+	GetByKey(ctx context.Context, userID, platform, contactKey string) (*model.Contact, error)
+	GetContactSettingsByContactID(ctx context.Context, contactID string) (*model.ContactSetting, error)
 }
 
 type Personas interface {
 	Create(ctx context.Context, persona *model.Persona) error
 	GetAll(ctx context.Context) ([]model.Persona, error)
+	GetByID(ctx context.Context, id string) (*model.Persona, error)
+	GetDefault(ctx context.Context) (*model.Persona, error)
 }
 
 // Storage is the main storage interface that aggregates all repository interfaces

@@ -18,7 +18,7 @@ type Services struct {
 func NewServices(st store.Storage, log logger.Logger) Services {
 	return Services{
 		Users:    NewUsersService(st.Users(), log),
-		Contacts: NewContactsService(st.Contacts(), log),
+		Contacts: NewContactsService(st.Contacts(), st.Personas(), log),
 		Personas: NewPersonasService(st.Personas(), log),
 	}
 }

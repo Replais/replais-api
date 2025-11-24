@@ -39,6 +39,7 @@ func (app *application) routes() http.Handler {
 		// contacts
 		r.Route("/contacts", func(r chi.Router) {
 			r.Post("/", contacts.Create)
+			r.Get("/settings", contacts.GetContactSettings)
 		})
 		// personas
 		r.Route("/personas", func(r chi.Router) {

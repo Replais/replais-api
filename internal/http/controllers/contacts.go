@@ -2,12 +2,15 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/Replais/replais-api/internal/config"
+	"github.com/Replais/replais-api/internal/http/dto"
 	"github.com/Replais/replais-api/internal/logger"
 	"github.com/Replais/replais-api/internal/model"
 	"github.com/Replais/replais-api/internal/service"
+	"github.com/Replais/replais-api/internal/store"
 )
 
 type ContactsController struct {
@@ -60,4 +63,37 @@ func (c *ContactsController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (c *ContactsController) GetContactSettings(w http.ResponseWriter, r *http.Request) {
+	// Extract query parameters
+	userID := r.URL.Query().Get("user_id")
+	platform := r.URL.Query().Get("platform")
+	contactKey := r.URL.Query().Get("contact_key")
+
+	// Validate required parameters
+	if userID == "" || platform == "" || contactKey == "" {
+		badRequestError(c.logger, w, r, errors.New("missing required parameters: user_id, platform, and contact_key are required"))
+		return
+	}
+
+	// Call service to get contact settings and persona
+	contactSettings, persona, err := c.contacts.GetContactSettings(r.Context(), userID, platform, contactKey)
+	if err != nil {
+		if err == store.ErrNotFound {
+			notFoundError(c.logger, w, r, err)
+			return
+		}
+		internalServerError(c.logger, w, r, err)
+		return
+	}
+
+	// Service guarantees persona will always be returned (either from settings or default)
+	// Map to DTO using the mapper
+	response := dto.ToContactSettingsResponse(*contactSettings, *persona)
+	err = jsonResponse(w, http.StatusOK, response)
+	if err != nil {
+		internalServerError(c.logger, w, r, err)
+		return
+	}
 }
